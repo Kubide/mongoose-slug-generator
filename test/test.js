@@ -360,3 +360,43 @@ describe('Counter plugin usage', function () {
     });
 });
 
+describe('Counter plugin usage to check titles including other titles', function () {
+    before(function (done) {
+        mongoose.model('ResourceCounter').remove({}, function () {
+            done();
+        });
+    });
+
+    after(function (done) {
+        mongoose.model('ResourceCounter').remove({}, function () {
+            done();
+        });
+    });
+
+    it('Create a resource and check Slug and UniqueSlug', function (done) {
+        mongoose.model('ResourceCounter').create({
+            title: 'pineapple',
+            subtitle: "subtitle"
+        }, function (err, doc) {
+            should.not.exist(err);
+            should.exist(doc);
+            doc.should.have.property('slug').and.equal('pineapple-subtitle');
+            doc.should.have.property('uniqueSlug').and.equal('pineapple');
+            done();
+        });
+    });
+
+    it('Create a second resource which has a title part of first resources title', function (done) {
+        mongoose.model('ResourceCounter').create({
+            title: 'apple',
+            subtitle: "subtitle"
+        }, function (err, doc) {
+            should.not.exist(err);
+            should.exist(doc);
+            doc.should.have.property('slug').and.equal('apple-subtitle');
+            doc.should.have.property('uniqueSlug').and.equal('apple');
+            done();
+            resource = doc;
+        });
+    });
+});
